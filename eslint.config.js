@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
 import importPlugin from "eslint-plugin-import";
+import simpleImportSort from "eslint-plugin-simple-import-sort"; // ✅ FIX
 
 export default [
   {
@@ -10,7 +11,7 @@ export default [
 
   js.configs.recommended,
 
-  // 🔥 keep strict rules (important)
+  // 🔥 strict TS rules
   ...tseslint.configs.strictTypeChecked,
 
   eslintConfigPrettier,
@@ -24,6 +25,8 @@ export default [
         project: "./tsconfig.json",
         tsconfigRootDir: process.cwd(),
       },
+      ecmaVersion: 2022, // ✅ add
+      sourceType: "module", // ✅ add
     },
 
     plugins: {
@@ -53,7 +56,16 @@ export default [
       // TypeScript Rules
       // ----------------------
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": ["error"],
+
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          args: "all", // ✅ FIX (your issue)
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
 
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/explicit-function-return-type": "off",
@@ -65,23 +77,15 @@ export default [
       // ----------------------
       // Import Rules
       // ----------------------
-      "import/order": [
-        "error",
-        {
-          groups: [
-            "builtin",
-            "external",
-            "internal",
-            "parent",
-            "sibling",
-            "index",
-          ],
-          "newlines-between": "always",
-        },
-      ],
+
+      // ❌ REMOVE this (conflicts with simple-import-sort)
+      // "import/order": ...
+
       "import/no-unresolved": "error",
       "import/no-duplicates": "error",
       "import/newline-after-import": "error",
+
+      // ✅ better import sorting
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
     },
