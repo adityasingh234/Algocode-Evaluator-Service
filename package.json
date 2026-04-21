@@ -5,6 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
     "build": "npx tsc",
     "watch": "npx tsc -w",
     "prestart": "npm run build",
@@ -16,8 +20,17 @@
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@typescript-eslint/eslint-plugin": "^8.59.0",
+    "@typescript-eslint/parser": "^8.59.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
     "nodemon": "^3.1.14",
-    "typescript": "^6.0.2"
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.2"
   },
   "dependencies": {
     "concurrently": "^9.2.1",
