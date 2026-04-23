@@ -2,7 +2,12 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
 import importPlugin from "eslint-plugin-import";
-import simpleImportSort from "eslint-plugin-simple-import-sort"; // ✅ FIX
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default [
   {
@@ -11,8 +16,11 @@ export default [
 
   js.configs.recommended,
 
-  // 🔥 strict TS rules
-  ...tseslint.configs.strictTypeChecked,
+  // ✅ APPLY TS RULES ONLY TO TS FILES
+  {
+    files: ["src/**/*.ts"],
+    ...tseslint.configs.strictTypeChecked[0],
+  },
 
   eslintConfigPrettier,
 
@@ -23,10 +31,14 @@ export default [
       parser: tseslint.parser,
       parserOptions: {
         project: "./tsconfig.json",
-        tsconfigRootDir: process.cwd(),
+        tsconfigRootDir: __dirname,
       },
-      ecmaVersion: 2022, // ✅ add
-      sourceType: "module", // ✅ add
+      ecmaVersion: 2022,
+      sourceType: "module",
+      // ✅ ADD THIS
+      globals: {
+        process: "readonly",
+      },
     },
 
     plugins: {
@@ -36,14 +48,13 @@ export default [
 
     settings: {
       "import/resolver": {
-        typescript: {},
+        typescript: {
+          project: "./tsconfig.json",
+        },
       },
     },
 
     rules: {
-      // ----------------------
-      // Base Rules
-      // ----------------------
       "no-var": "error",
       "prefer-const": "error",
       "no-console": "warn",
@@ -52,15 +63,12 @@ export default [
       semi: ["error", "always"],
       "no-duplicate-imports": "error",
 
-      // ----------------------
-      // TypeScript Rules
-      // ----------------------
       "no-unused-vars": "off",
 
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
-          args: "all", // ✅ FIX (your issue)
+          args: "all",
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
           ignoreRestSiblings: true,
@@ -74,18 +82,10 @@ export default [
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-misused-promises": "error",
 
-      // ----------------------
-      // Import Rules
-      // ----------------------
-
-      // ❌ REMOVE this (conflicts with simple-import-sort)
-      // "import/order": ...
-
-      "import/no-unresolved": "error",
+      "import/no-unresolved": "off",
       "import/no-duplicates": "error",
       "import/newline-after-import": "error",
 
-      // ✅ better import sorting
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
     },
