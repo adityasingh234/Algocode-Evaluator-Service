@@ -12,7 +12,7 @@ export default function SampleWorker(queueName: string) {
       if (job.name === "SampleJob") {
         const sampleJobInstance = new SampleJob(job.data);
         sampleJobInstance.handle(job);
-        return true;
+        return true; 
       }
     },
     {
